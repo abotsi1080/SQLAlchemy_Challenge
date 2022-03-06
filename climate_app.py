@@ -57,3 +57,25 @@ def homepage():
         f"/api/v1.0/end date *** low, high, and average temp for date given and each date up to and including end date<br/>"
         f"************************************************<br/>"
     )
+@app.route("/api/v1.0/precipitaton")
+def precipitation():
+    
+    results = (session.query(Measurement.date, Measurement.prcp, Measurement.station)
+                      .filter(Measurement.date > "2010-01-01")
+                      .order_by(Measurement.date)
+                      .all())
+    
+    precipScore= []
+    for result in results:
+        precipDict = {result.date: result.prcp, "Station": result.station}
+        precipScore.append(precipDict)
+
+    return jsonify(precipScore)
+
+@app.route("/api/v1.0/stations")
+def stations():
+
+    results = (session.query(Station.name).all())
+    all_stations = list(np.ravel(results))
+    return jsonify(all_stations)
+
